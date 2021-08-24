@@ -1,10 +1,10 @@
 #include "push_swap.h"
 
-t_data	*new_data(int value)
+t_stack	*new_data(int value)
 {
-	t_data		*new;
+	t_stack		*new;
 
-	new = (t_data *)malloc(sizeof(t_data));
+	new = (t_stack *)malloc(sizeof(t_stack));
 	if (new == NULL)
 		return (NULL);
 	new->value = value;
@@ -16,15 +16,15 @@ t_data	*new_data(int value)
 int		stack_size(t_stack *stack)
 {
 	int			count;
-	t_data		*current;
+	t_stack		*current;
 
 	if (stack == NULL)
 		return (0);
-	if (stack->top == NULL || stack->bottom == NULL)
+	if (stack->up == NULL || stack->down == NULL)
 		return (0);
 	count = 1;
-	current = stack->bottom;
-	while (current->up != (t_data *)stack)
+	current = stack->down;
+	while (current->up != stack)
 	{
 		count++;
 		current = current->up;
@@ -32,53 +32,53 @@ int		stack_size(t_stack *stack)
 	return (count);
 }
 
-void	add_top(t_stack *stack, t_data *new)
+void	add_top(t_stack *stack, t_stack *new)
 {
-	t_data		*tmp_top;
+	t_stack		*tmp_up;
 
 	if (stack == NULL || new == NULL)
 		return ;
-	if (stack->top == NULL && stack->bottom == NULL)
+	if (stack->up == NULL && stack->down == NULL)
 	{
-		stack->top = new;
-		stack->bottom = new;
-		new->up = (t_data *)stack;
-		new->down = (t_data *)stack;
+		stack->up = new;
+		stack->down = new;
+		new->up = stack;
+		new->down = stack;
 		return ;
 	}
-	tmp_top = stack->top;
-	stack->top = new;
-	tmp_top->up = new;
-	new->up = (t_data *)stack;
-	new->down = tmp_top;
+	tmp_up = stack->up;
+	stack->up = new;
+	tmp_up->up = new;
+	new->up = stack;
+	new->down = tmp_up;
 }
 
 void	stack_clear(t_stack *stack)
 {
-	t_data		*current;
-	t_data		*tmp;
+	t_stack		*current;
+	t_stack		*tmp;
 
 	if (stack == NULL)
 		return ;
-	if (stack->top == NULL || stack->bottom == NULL)
+	if (stack->up == NULL || stack->down == NULL)
 		return ;
-	current = stack->bottom;
+	current = stack->down;
 	tmp = current->up;
 	free(current);
 	current = tmp;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		tmp = current->up;
 		free(current);
 		current = tmp;
 	}
-	stack->top = NULL;
-	stack->bottom = NULL;
+	stack->up = NULL;
+	stack->down = NULL;
 }
 
 void	do_stack(t_stack *stack, int value)
 {
-	t_data		*new;
+	t_stack		*new;
 
 	new = new_data(value);
 	add_top(stack, new);

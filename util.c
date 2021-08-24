@@ -4,20 +4,20 @@ void	stack_init(t_stack *stack)
 {
 	if (stack == NULL)
 		return ;
-	stack->top = NULL;
-	stack->bottom = NULL;
+	stack->up = NULL;
+	stack->down = NULL;
 }
 
 void	print_stack(t_stack *stack)
 {
-	t_data	*current;
+	t_stack	*current;
 
-	if (stack == NULL || stack->top == NULL || stack->bottom == NULL)
+	if (stack == NULL || stack->up == NULL || stack->down == NULL)
 		return ;
-	current = stack->top;
+	current = stack->up;
 	printf("%d\n", current->value);
 	current = current->down;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		printf("%d\n", current->value);
 		current = current->down;

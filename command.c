@@ -2,36 +2,36 @@
 
 void	do_swap(t_stack *stack)
 {
-	t_data		*tmp1;
-	t_data		*tmp2;
+	t_stack		*tmp1;
+	t_stack		*tmp2;
 
-	tmp1 = stack->top->down;
-	tmp2 = stack->top->down->down;
+	tmp1 = stack->up->down;
+	tmp2 = stack->up->down->down;
 	if (stack == NULL || stack_size(stack) < 2)
 		return ;
 	else if (stack_size(stack) == 2)
 	{
-		stack->top->down->up = (t_data *)stack;
-		stack->top->down->down = stack->top;
-		stack->top->up = tmp1;
-		stack->top->down = (t_data *)stack;
-		stack->top = tmp1;
-		stack->bottom = tmp1->down;
+		stack->up->down->up = stack;
+		stack->up->down->down = stack->up;
+		stack->up->up = tmp1;
+		stack->up->down = stack;
+		stack->up = tmp1;
+		stack->down = tmp1->down;
 	}
 	else
 	{
-		stack->top->down->up = (t_data *)stack;
-		stack->top->down->down = stack->top;
-		stack->top->up = tmp1;
-		stack->top->down = tmp2;
-		tmp2->up = stack->top;
-		stack->top = tmp1;
+		stack->up->down->up = stack;
+		stack->up->down->down = stack->up;
+		stack->up->up = tmp1;
+		stack->up->down = tmp2;
+		tmp2->up = stack->up;
+		stack->up = tmp1;
 	}
 }
 
 void	do_push(t_stack *src, t_stack *dst)
 {
-	t_data		*tmp;
+	t_stack		*tmp;
 
 	if (src == NULL || dst == NULL)
 		return ;
@@ -39,23 +39,23 @@ void	do_push(t_stack *src, t_stack *dst)
 		return ;
 	if (stack_size(src) == 1)
 	{
-		add_top(dst, src->top);
-		src->top = NULL;
-		src->bottom = NULL;
+		add_top(dst, src->up);
+		src->up = NULL;
+		src->down = NULL;
 	}
 	else if (stack_size(src) >= 2)
 	{
-		tmp = src->top->down;
-		add_top(dst, src->top);
-		src->top = tmp;
-		tmp->up = (t_data *)src;
+		tmp = src->up->down;
+		add_top(dst, src->up);
+		src->up = tmp;
+		tmp->up = src;
 	}
 }
 
 void	do_rotate(t_stack *stack)
 {
-	t_data		*tmp1;
-	t_data		*tmp2;
+	t_stack		*tmp1;
+	t_stack		*tmp2;
 
 	if (stack_size(stack) < 2)
 		return ;
@@ -63,22 +63,22 @@ void	do_rotate(t_stack *stack)
 		do_swap(stack);
 	else
 	{
-		tmp1 = stack->top->down;
-		stack->bottom->down = stack->top;
-		stack->top->up = stack->bottom;
-		stack->top->down = (t_data *)stack;
-		tmp1->up = (t_data *)stack;
+		tmp1 = stack->up->down;
+		stack->down->down = stack->up;
+		stack->up->up = stack->down;
+		stack->up->down = stack;
+		tmp1->up = stack;
 		
-		tmp2 = stack->top;
-		stack->top = tmp1;
-		stack->bottom = tmp2;
+		tmp2 = stack->up;
+		stack->up = tmp1;
+		stack->down = tmp2;
 	}
 }
 
 void	do_reverse(t_stack *stack)
 {
-	t_data		*tmp1;
-	t_data		*tmp2;
+	t_stack		*tmp1;
+	t_stack		*tmp2;
 
 	if (stack_size(stack) < 2)
 		return ;
@@ -86,15 +86,15 @@ void	do_reverse(t_stack *stack)
 		do_swap(stack);
 	else
 	{
-		tmp1 = stack->bottom->up;
+		tmp1 = stack->down->up;
 
-		stack->bottom->down = stack->top;
-		stack->bottom->up = (t_data *)stack;
-		stack->top->up = stack->bottom;
-		tmp1->down = (t_data *)stack;
+		stack->down->down = stack->up;
+		stack->down->up = stack;
+		stack->up->up = stack->down;
+		tmp1->down = stack;
 		
-		tmp2 = stack->bottom;
-		stack->bottom = tmp1;
-		stack->top = tmp2;
+		tmp2 = stack->down;
+		stack->down = tmp1;
+		stack->up = tmp2;
 	}
 }

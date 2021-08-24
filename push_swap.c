@@ -33,7 +33,7 @@ int		chunk_check(int *chunk, size_t len, int value)
 //toriaezu ugoku yo
 void	make_chunk(t_stack *stack, int *chunk, size_t len)
 {
-	t_data	*current;
+	t_stack	*current;
 	int		tmp1;
 	int		tmp2;
 	int		i;
@@ -41,10 +41,10 @@ void	make_chunk(t_stack *stack, int *chunk, size_t len)
 
 	if (stack == NULL || chunk == NULL || len < 0)
 		return ;
-	current = stack->top;
+	current = stack->up;
 	chunk[0] = current->value;
 	current = current->down;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		i = 0;
 		while (i < len)
@@ -72,18 +72,18 @@ void	make_chunk(t_stack *stack, int *chunk, size_t len)
 //test is OK!!
 int		stack_chunk_match(t_stack *stack, int *chunk, size_t len)
 {
-	t_data	*current;
+	t_stack	*current;
 	int		spot;
 
-	if (stack == NULL || stack->top == NULL || stack->bottom == NULL || chunk == NULL || len < 0)
+	if (stack == NULL || stack->up == NULL || stack->down == NULL || chunk == NULL || len < 0)
 		return (-1);
-	current = stack->top;
+	current = stack->up;
 	spot = 0;
 	if (chunk_check(chunk, len, current->value))
 		return (spot);
 	current = current->down;
 	spot++;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		if (chunk_check(chunk, len, current->value))
 			return (spot);
@@ -96,20 +96,20 @@ int		stack_chunk_match(t_stack *stack, int *chunk, size_t len)
 //test OK!!
 int		stack_biggest(t_stack *stack)
 {
-	t_data	*current;
+	t_stack	*current;
 	int		biggest;
 	int		spot;
 	int		count;
 
-	if (stack == NULL || stack->top == NULL || stack->bottom == NULL)
+	if (stack == NULL || stack->up == NULL || stack->down == NULL)
 		return (-1);
-	current = stack->top;
+	current = stack->up;
 	biggest = current->value;
 	spot = 0;
 	count = 0;
 	current = current->down;
 	count++;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		if (biggest < current->value)
 		{
@@ -125,15 +125,15 @@ int		stack_biggest(t_stack *stack)
 
 int		max_check(t_stack *stack, int arg)
 {
-	t_data	*current;
+	t_stack	*current;
 
-	if (stack == NULL || stack->top == NULL || stack->bottom == NULL)
+	if (stack == NULL || stack->up == NULL || stack->down == NULL)
 		return (0);
-	current = stack->top;
+	current = stack->up;
 	if (arg < current->value)
 		return (0);
 	current = current->down;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		if (arg < current->value)
 			return (0);
@@ -144,15 +144,15 @@ int		max_check(t_stack *stack, int arg)
 
 int		min_check(t_stack *stack, int arg)
 {
-	t_data	*current;
+	t_stack	*current;
 
-	if (stack == NULL || stack->top == NULL || stack->bottom == NULL)
+	if (stack == NULL || stack->up == NULL || stack->down == NULL)
 		return (0);
-	current = stack->bottom;
+	current = stack->down;
 	if (arg < current->value)
 		return (0);
 	current = current->up;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		if (arg < current->value)
 			return (0);
@@ -164,14 +164,14 @@ int		min_check(t_stack *stack, int arg)
 
 void	stack_adjust(t_stack *stack, int arg)
 {
-	t_data	*current;
+	t_stack	*current;
 	int		amount;
 	int		mid;
 	int		spot;
 	int		aim;
 	int		cnt;
 
-	if (stack == NULL || stack->top == NULL || stack->bottom == NULL)
+	if (stack == NULL || stack->up == NULL || stack->down == NULL)
 		return ;
 	if (stack_size(stack) < 2)
 		return ;
@@ -195,14 +195,14 @@ void	stack_adjust(t_stack *stack, int arg)
 	}
 
 	aim = INT_MAX;
-	current = stack->top;
+	current = stack->up;
 	spot = 0;
 	cnt = 0;
 	if (arg > current->value)
 		aim = current->value;
 	current = current->down;
 	cnt++;
-	while (current != (t_data *)stack)
+	while (current != stack)
 	{
 		if (arg > current->value)
 		{
@@ -232,7 +232,7 @@ void	stack_adjust(t_stack *stack, int arg)
 
 void	do_sort(t_stack *stack_a, t_stack *stack_b)
 {
-	t_data	*current;
+	t_stack	*current;
 	int		*chunk;
 	int		amount;
 	int		mid;
@@ -261,7 +261,7 @@ void	do_sort(t_stack *stack_a, t_stack *stack_b)
 				while (amount - (spot++) > 0)
 					do_reverse(stack_a);
 			}
-			stack_adjust(stack_b, stack_a->top->value);
+			stack_adjust(stack_b, stack_a->up->value);
 			do_push(stack_a, stack_b);
 		}
 	}
@@ -330,5 +330,6 @@ int		main(int argc, char *argv[])
 
 	stack_clear(&stack_a);
 	stack_clear(&stack_b);
+	system("leaks a.out");
 	return (0);
 }
